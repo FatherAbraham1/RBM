@@ -14,8 +14,8 @@ public class Driver {
 		rbm.connectFully();
 		System.out.println(rbm);
 		
-		Visualizer visualizer = new Visualizer(rbm);
-		visualizer.showStructure();
+//		Visualizer visualizer = new Visualizer(rbm);
+//		visualizer.showStructure();
 
 	}
 

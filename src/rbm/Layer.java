@@ -10,7 +10,7 @@ public class Layer {
 	public Layer(int size) {
 		neurons = new ArrayList<>(size);
 		for (int i = 0; i < size; i++)
-			neurons.add(new Neuron());
+			neurons.add(new NeuronDefault());
 	}
 	
 	public Neuron get(int index) {

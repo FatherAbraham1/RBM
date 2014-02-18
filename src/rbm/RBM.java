@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class RBM {
 	
-	Layer visible, hidden;
+	public Layer visible, hidden;
 	List<Connection> connections;
 	Random random = new Random(11235);
 	
@@ -52,8 +52,6 @@ public class RBM {
 	public void initializeWeights() {
 		for (Connection connection : connections)
 			connection.setWeight(random.nextGaussian() * 0.01);
-		for (Connection connection : connections)
-			System.out.println(connection.getWeight());
 	}
 	
 	public String toString() {

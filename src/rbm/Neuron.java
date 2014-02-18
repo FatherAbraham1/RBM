@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-public class Neuron {
+public abstract class Neuron {
 	
-	private Map<Neuron, Connection> connections = new HashMap<>();
+	protected Map<Neuron, Connection> connections = new HashMap<>();
+	protected double state;
+	protected static Random random = new Random(11235);
 	
 	public Neuron() {
 		
@@ -29,6 +32,39 @@ public class Neuron {
 	
 	public List<Connection> getConnections() {
 		return new ArrayList<>(connections.values());
+	}
+	
+	private double activationEnergy() {
+		double energy = 0.0;
+		for (Map.Entry<Neuron, Connection > conn : connections.entrySet()) {
+			energy += conn.getKey().state() * conn.getValue().getWeight();
+		}
+		return energy;
+	}
+	
+	private double logistic(double energy) {
+		return 1.0 / Math.exp(-1 * energy);
+	}
+	
+	private void stochasticSwitch(double probability) {
+		if (random.nextDouble() < probability)
+			state = 1.0;
+		else
+			state = 0.0;
+	}
+	
+	public void update() {
+		double energy = activationEnergy();
+		double probability = logistic(energy);
+		stochasticSwitch(probability);
+	}
+	
+	public double state() {
+		return state;
+	}
+	
+	public boolean on() {
+		return (state != 0.0);
 	}
 
 }
