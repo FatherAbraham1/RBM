@@ -2,7 +2,9 @@ package driver;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -29,7 +31,9 @@ public class Driver {
 		rbm.connectFully();
 		
 		//trainImages(rbm, "data/train/9/");
-		trainImages(rbm, "data/train/0.txt", "zero");
+		//trainImages(rbm, "data/train/0.txt", "zero");
+		
+		convertImagesToText("data/images/test/9/", "data/test/9.txt");
 		
 //		ImagePane img = new ImagePane();
 //		img.showImage(createImage(data), 5.0);
@@ -53,10 +57,12 @@ public class Driver {
 		trainer.drawProgress(new ImagePane(width, 10.0));
 		
 		// train on all data
-		trainer.trainData(3);
+//		trainer.trainData(3);
 		
-		/*
-		File dir = new File(file);
+	}
+	
+	private static void convertImagesToText(String filePath, String output) {
+		File dir = new File(filePath);
 		File[] images = dir.listFiles();
 		int[][] datapoints = new int[images.length][]; 
 		
@@ -74,7 +80,7 @@ public class Driver {
 	 
 		try {
 			
-			File file = new File("data/train-9.txt");
+			File file = new File(output);
  
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
@@ -89,7 +95,6 @@ public class Driver {
 					line += val+" ";
 				}
 				line = line.substring(0,line.length()-1)+"\n";
-				System.out.println(line.length());
 				bw.write(line);
 			}
 			bw.close();
@@ -99,19 +104,6 @@ public class Driver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		// choose the trainer
-		Trainer trainerCD = new TrainerCD(rbm, datapoints);
-		Trainer trainerPSO = new TrainerPSO(rbm, datapoints);
-		
-		Trainer trainer = trainerCD;
-		trainer.drawProgress(new ImagePane(width, 10.0));
-		
-		// train on all data
-		trainer.trainData(100);
-		*/
-		
 	}
 	
 	private static int[] serialize(int[][] data) {
