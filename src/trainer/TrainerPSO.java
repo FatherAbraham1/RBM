@@ -8,13 +8,12 @@ import data.Data;
 public class TrainerPSO extends Trainer {
 	
 	PSO pso = null;
-	int numParticles = 300;
 	Fitness fitness;
 	
 	public TrainerPSO(RBM rbm, Data data) {
 		super(rbm, data);
 		fitness = new Fitness(rbm, data);
-		pso = new PSO(numParticles, rbm.connections.size(), fitness);
+		pso = new PSO(rbm.connections.size(), fitness);
 	}
 	
 	public void trainData(int epochs) {

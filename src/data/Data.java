@@ -25,5 +25,12 @@ public class Data {
 	public int size() {
 		return datapoints.size();
 	}
+	
+	public Data truncate(int num) {
+		int total = datapoints.size();
+		for (int i = 0; i < (total - num); i++)
+			datapoints.remove(datapoints.size()-1);
+		return this;
+	}
 
 }

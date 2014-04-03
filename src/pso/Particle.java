@@ -7,7 +7,8 @@ public class Particle {
 	
 	int size;
 	double[] position, velocity, personalBestPosition;
-	private double fitness, personalBestFitness;
+	private double personalBestFitness;
+	private double minValue, maxValue;
 
 	/**
 	 * Create a new particle 
@@ -20,11 +21,21 @@ public class Particle {
 		this.size = size;
 		position = new double[size];
 		velocity = new double[size];
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		initialize();
+		personalBestPosition = position;
+	}
+	
+	public void reinitialize() {
+		initialize();
+	}
+	
+	private void initialize() {
 		for (int i = 0; i < size; i++) {
 			position[i] = Tools.getRandomDouble(minValue, maxValue);
 			velocity[i] = Tools.getRandomDouble(minValue, maxValue);
 		}
-		personalBestPosition = position;
 	}
 	
 	public void runIteration() {
@@ -49,7 +60,6 @@ public class Particle {
 	}
 	
 	public void setFitness(double fitness) {
-		this.fitness = fitness;
 		if (fitness > personalBestFitness) {
 			personalBestFitness = fitness;
 			personalBestPosition = position;

@@ -35,10 +35,8 @@ public class Fitness {
 					correct++;
 			fitness += (double)correct / datapoint.size();
 			
-			if (i > 1) break;
-			
 		}
-		fitness /= i;
+		fitness /= (i+1);
 		
 		particle.setFitness(fitness);
 		

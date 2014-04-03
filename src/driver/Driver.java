@@ -1,14 +1,5 @@
 package driver;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import rbm.RBM;
 import trainer.Trainer;
 import trainer.TrainerCD;
@@ -40,15 +31,16 @@ public class Driver {
 		Parser parser = new Parser(data);
 		parser.parseLabelFile(file, label);
 		
-		// choose the trainer
-		Trainer trainerCD = new TrainerCD(rbm, data);
-		Trainer trainerPSO = new TrainerPSO(rbm, data);
 		
-		Trainer trainer = trainerCD;
+//		Trainer trainer = new TrainerCD(rbm, data);
+//		trainer.trainData(3);
+		
+		data.truncate(3);
+		Trainer trainer = new TrainerPSO(rbm, data);
+		trainer.trainData(300);
+		
 		trainer.drawProgress(new ImagePane(width, 10.0));
 		
-		// train on all data
-		trainer.trainData(3);
 		
 	}
 

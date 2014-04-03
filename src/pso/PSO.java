@@ -6,17 +6,21 @@ import java.util.List;
 public class PSO {
 	
 	List<Particle> particles;
-	double minValue = -2;
-	double maxValue =  2;
-	static double momentum = 0.1;
-	// NOTE: these influences can be local to the particle
-	static double cognitiveInfluence = 0.7;
-	static double socialInfluence = 0.3;
+	double minValue = -4;
+	double maxValue =  4;
+	static int numParticles = 75;
+	static double momentum = 4;
+	static double cognitiveInfluence = 2.5;
+	static double socialInfluence = 2.5;
 	static Particle globalBest = null;
 	double globalBestFitness = 0.0;
 	Fitness fitnessEvaluation;
+	double avgFitness = 0.0;
+	int convergenceCount = 0;
 	
-	public PSO(int numParticles, int particleSize, Fitness fitnessEvaluation) {
+	// NOTE: the influences can be local to the particle
+	
+	public PSO(int particleSize, Fitness fitnessEvaluation) {
 		particles = new ArrayList<>(numParticles);
 		this.fitnessEvaluation = fitnessEvaluation;
 		for (int i = 0; i < numParticles; i++) {
@@ -34,14 +38,37 @@ public class PSO {
 	
 	public void evaluateParticles() {
 		// evaluate all particles
+		double minFitness = Double.MAX_VALUE;
+		double avgFitness = 0.0;
 		for (Particle particle : particles) {
 			double fitness = fitnessEvaluation.evaluate(particle);
 			if (fitness > globalBestFitness) {
 				globalBestFitness = fitness;
 				globalBest = particle;
 			}
+			avgFitness += fitness;
+			minFitness = Math.min(fitness, minFitness);
 		}
-		System.out.println("FITNESS: "+globalBestFitness);
+		avgFitness /= particles.size();
+		double range = globalBestFitness - minFitness;
+		//System.out.format("FITNESS: (%10f , %10f)   %f\n", minFitness, globalBestFitness, avgFitness);
+		System.out.format("RANGE: %10f    AVG: %10f    BEST: %10f\n", 
+				range, 
+				avgFitness,
+				globalBestFitness);
+		
+		if (this.avgFitness == avgFitness) {
+			convergenceCount++;
+		} else {
+			this.avgFitness = avgFitness;
+			convergenceCount = 0;
+		}
+		
+		if (range < 0.01 || convergenceCount > 5) {
+			System.out.println("REINITIALIZING");
+			for (Particle particle : particles)
+				particle.reinitialize();
+		}
 	}
 
 }
