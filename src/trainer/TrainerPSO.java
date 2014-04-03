@@ -3,6 +3,7 @@ package trainer;
 import pso.Fitness;
 import pso.PSO;
 import rbm.RBM;
+import data.Data;
 
 public class TrainerPSO extends Trainer {
 	
@@ -10,9 +11,9 @@ public class TrainerPSO extends Trainer {
 	int numParticles = 300;
 	Fitness fitness;
 	
-	public TrainerPSO(RBM rbm, int[][] datapoints) {
-		super(rbm, datapoints);
-		fitness = new Fitness(rbm, datapoints);
+	public TrainerPSO(RBM rbm, Data data) {
+		super(rbm, data);
+		fitness = new Fitness(rbm, data);
 		pso = new PSO(numParticles, rbm.connections.size(), fitness);
 	}
 	

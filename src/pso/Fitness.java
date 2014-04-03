@@ -1,15 +1,17 @@
 package pso;
 
 import rbm.RBM;
+import data.Data;
+import data.Datapoint;
 
 public class Fitness {
 	
 	RBM rbm;
-	int[][] datapoints;
+	Data datapoints;
 	
-	public Fitness(RBM rbm, int[][] datapoints) {
+	public Fitness(RBM rbm, Data data) {
 		this.rbm = rbm;
-		this.datapoints = datapoints;
+		this.datapoints = data;
 	}
 	
 	public double evaluate(Particle particle) {
@@ -18,9 +20,9 @@ public class Fitness {
 		
 		double fitness = 0.0;
 		int i;
-		for (i = 0; i < datapoints.length; i++) {
-			int[] datapoint = datapoints[i];
-			rbm.setVisibleNodes(datapoint);
+		for (i = 0; i < datapoints.size(); i++) {
+			Datapoint datapoint = datapoints.get(i);
+			rbm.setVisibleNodes(datapoint.vector());
 			rbm.hidden.sample();
 			rbm.visible.sample();
 			rbm.hidden.sample();
@@ -28,10 +30,10 @@ public class Fitness {
 			
 			// calculate percent correct
 			int correct = 0;
-			for (int j = 0; j < datapoint.length; j++)
-				if (datapoint[j] == generated[j])
+			for (int j = 0; j < datapoint.size(); j++)
+				if (datapoint.get(j) == generated[j])
 					correct++;
-			fitness += (double)correct / datapoint.length;
+			fitness += (double)correct / datapoint.size();
 			
 			if (i > 1) break;
 			

@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import rbm.Connection;
-import rbm.Neuron;
 import rbm.RBM;
+import data.Data;
+import data.Datapoint;
 
 public class TrainerCD extends Trainer {
 	
@@ -14,15 +15,15 @@ public class TrainerCD extends Trainer {
 	Map<Connection, Integer> negative;
 	double learningRate = 0.5;
 	
-	public TrainerCD(RBM rbm, int[][] datapoints) {
-		super(rbm, datapoints);
+	public TrainerCD(RBM rbm, Data data) {
+		super(rbm, data);
 	}
 	
 	public void trainData(int epochs) {
 		for (int epoch = 0; epoch < epochs; epoch++) {
 			System.out.println("Epoch: "+epoch);
-			for (int i = 0; i < datapoints.length; i++) {
-				int[] datapoint = datapoints[i];
+			for (int i = 0; i < data.size(); i++) {
+				Datapoint datapoint = data.get(i);
 				trainDataPoint(datapoint);
 				if (img != null)
 					img.showImage(rbm.read());
@@ -31,8 +32,8 @@ public class TrainerCD extends Trainer {
 		}
 	}
 	
-	public void trainDataPoint(int[] datapoint) {
-		rbm.setVisibleNodes(datapoint);
+	public void trainDataPoint(Datapoint datapoint) {
+		rbm.setVisibleNodes(datapoint.vector());
 		rbm.hidden.sample();
 		positive = getGradient();
 		rbm.visible.sample();

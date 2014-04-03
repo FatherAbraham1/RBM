@@ -12,6 +12,8 @@ import trainer.Trainer;
 import trainer.TrainerCD;
 import trainer.TrainerPSO;
 import visualizer.ImagePane;
+import data.Data;
+import data.Parser;
 
 public class Driver {
 	
@@ -26,7 +28,8 @@ public class Driver {
 		RBM rbm = new RBM(width * height, 8);
 		rbm.connectFully();
 		
-		trainImages(rbm, "data/train/7/");
+		//trainImages(rbm, "data/train/9/");
+		trainImages(rbm, "data/train/0.txt", "zero");
 		
 //		ImagePane img = new ImagePane();
 //		img.showImage(createImage(data), 5.0);
@@ -36,11 +39,26 @@ public class Driver {
 
 	}
 	
-	private static void trainImages(RBM rbm, String directory) {
+	private static void trainImages(RBM rbm, String file, String label) {
 		
-		File dir = new File(directory);
+		Data data = new Data();
+		Parser parser = new Parser(data);
+		parser.parseLabelFile(file, label);
+		
+		// choose the trainer
+		Trainer trainerCD = new TrainerCD(rbm, data);
+		Trainer trainerPSO = new TrainerPSO(rbm, data);
+		
+		Trainer trainer = trainerCD;
+		trainer.drawProgress(new ImagePane(width, 10.0));
+		
+		// train on all data
+		trainer.trainData(3);
+		
+		/*
+		File dir = new File(file);
 		File[] images = dir.listFiles();
-		int[][] datapoints = new int[images.length][];
+		int[][] datapoints = new int[images.length][]; 
 		
 		// read in data from images
 		int i = 0;
@@ -53,6 +71,35 @@ public class Driver {
 			datapoints[i] = serialize(data);
 			i++;
 		}
+	 
+		try {
+			
+			File file = new File("data/train-9.txt");
+ 
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+ 
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			for (int[] datapoint : datapoints) {
+				String line = "";
+				for (int val : datapoint) {
+					line += val+" ";
+				}
+				line = line.substring(0,line.length()-1)+"\n";
+				System.out.println(line.length());
+				bw.write(line);
+			}
+			bw.close();
+ 
+			System.out.println("Done");
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		
 		// choose the trainer
 		Trainer trainerCD = new TrainerCD(rbm, datapoints);
@@ -63,6 +110,7 @@ public class Driver {
 		
 		// train on all data
 		trainer.trainData(100);
+		*/
 		
 	}
 	
