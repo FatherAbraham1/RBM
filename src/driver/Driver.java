@@ -8,27 +8,70 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import rbm.RBM;
-import visualizer.Visualizer;
+import trainer.Trainer;
+import trainer.TrainerCD;
+import trainer.TrainerPSO;
+import visualizer.ImagePane;
 
 public class Driver {
+	
+	static int width = 28;
+	static int height = 28;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
-		int[][] data = readImage("data/train/0/0_0000.png");
-		
-		RBM rbm = new RBM(data.length * data[0].length, 8);
+		RBM rbm = new RBM(width * height, 8);
 		rbm.connectFully();
-		System.out.println(rbm);
+		
+		trainImages(rbm, "data/train/0/");
+		
+//		ImagePane img = new ImagePane();
+//		img.showImage(createImage(data), 5.0);
 		
 //		Visualizer visualizer = new Visualizer(rbm);
 //		visualizer.showStructure();
-		
-//		MNISTParser parser = new MNISTParser();
-//		parser.parse("data/t10k-labels-idx1-ubyte", "data/t10k-images-idx3-ubyte", "data/output");
 
+	}
+	
+	private static void trainImages(RBM rbm, String directory) {
+		
+		File dir = new File(directory);
+		File[] images = dir.listFiles();
+		int[][] datapoints = new int[images.length][];
+		
+		// read in data from images
+		int i = 0;
+		for (File image : images) {
+			int[][] data = readImage(image.getAbsolutePath());
+			if (data.length != width || data[0].length != height) {
+				System.out.println("ERROR: Invalid image dimension");
+				System.exit(0);
+			}
+			datapoints[i] = serialize(data);
+			i++;
+		}
+		
+		// choose the trainer
+		Trainer trainerCD = new TrainerCD(rbm, datapoints);
+		Trainer trainerPSO = new TrainerPSO(rbm, datapoints);
+		
+		Trainer trainer = trainerPSO;
+		trainer.drawProgress(new ImagePane(width, 10.0));
+		
+		// train on all data
+		trainer.trainData(3);
+		
+	}
+	
+	private static int[] serialize(int[][] data) {
+		int[] newData = new int[data.length * data[0].length];
+		for (int i = 0; i < data.length; i++)
+			for (int j = 0; j < data[i].length; j++)
+				newData[i*data[i].length+j] = data[i][j];
+		return newData;
 	}
 	
 	private static int[][] readImage(String file) {
@@ -37,10 +80,11 @@ public class Driver {
 			int width = image.getWidth();
 			int height = image.getHeight();
 			int[][] data = new int[height][width];
-			int black = new Color(255, 255, 255).getRGB();
 			for (int row = 0; row < height; row++) {
 				for (int col = 0; col < width; col++) {
-					if (image.getRGB(col, row) == black)
+					Color c = new Color(image.getRGB(col, row));
+					int rgb = c.getRed() + c.getGreen() + c.getBlue();
+					if (rgb < 200)
 						data[row][col] = 0;
 					else
 						data[row][col] = 1;
@@ -51,6 +95,17 @@ public class Driver {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private static void print(int[][] data) {
+		for (int i = 0; i < data.length; i++)
+			print(data[i]);
+	}
+	
+	private static void print(int[] data) {
+		for (int i = 0; i < data.length; i++)
+			System.out.print(data[i]+" ");
+		System.out.println();
 	}
 
 }

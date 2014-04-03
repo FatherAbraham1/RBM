@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Layer {
 	
-	List<Neuron> neurons;
+	public List<Neuron> neurons;
 	
 	public Layer(int size) {
 		neurons = new ArrayList<>(size);
@@ -19,6 +19,11 @@ public class Layer {
 	
 	public int size() {
 		return neurons.size();
+	}
+	
+	public void sample() {
+		for (Neuron neuron : neurons)
+			neuron.update();
 	}
 
 }

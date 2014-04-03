@@ -43,7 +43,7 @@ public abstract class Neuron {
 	}
 	
 	private double logistic(double energy) {
-		return 1.0 / Math.exp(-1 * energy);
+		return 1.0 / (1 + Math.exp(-1 * energy));
 	}
 	
 	private void stochasticSwitch(double probability) {
