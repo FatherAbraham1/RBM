@@ -7,8 +7,7 @@ import rbm.RBM;
 public class TrainerPSO extends Trainer {
 	
 	PSO pso = null;
-	int numParticles = 1;
-	double learningRate = 0.5;
+	int numParticles = 300;
 	Fitness fitness;
 	
 	public TrainerPSO(RBM rbm, int[][] datapoints) {
@@ -20,6 +19,8 @@ public class TrainerPSO extends Trainer {
 	public void trainData(int epochs) {
 		for (int i = 0; i < epochs; i++) {
 			pso.update();
+			if (img != null)
+				img.showImage(rbm.read());
 		}
 	}
 

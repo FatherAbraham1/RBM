@@ -26,7 +26,7 @@ public class Driver {
 		RBM rbm = new RBM(width * height, 8);
 		rbm.connectFully();
 		
-		trainImages(rbm, "data/train/0/");
+		trainImages(rbm, "data/train/7/");
 		
 //		ImagePane img = new ImagePane();
 //		img.showImage(createImage(data), 5.0);
@@ -58,11 +58,11 @@ public class Driver {
 		Trainer trainerCD = new TrainerCD(rbm, datapoints);
 		Trainer trainerPSO = new TrainerPSO(rbm, datapoints);
 		
-		Trainer trainer = trainerPSO;
+		Trainer trainer = trainerCD;
 		trainer.drawProgress(new ImagePane(width, 10.0));
 		
 		// train on all data
-		trainer.trainData(3);
+		trainer.trainData(100);
 		
 	}
 	

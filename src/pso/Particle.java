@@ -7,7 +7,7 @@ public class Particle {
 	
 	int size;
 	double[] position, velocity, personalBestPosition;
-	double fitness, personalBestFitness;
+	private double fitness, personalBestFitness;
 
 	/**
 	 * Create a new particle 
@@ -48,8 +48,12 @@ public class Particle {
 		}
 	}
 	
-	public double fitness() {
-		return 1.0;
+	public void setFitness(double fitness) {
+		this.fitness = fitness;
+		if (fitness > personalBestFitness) {
+			personalBestFitness = fitness;
+			personalBestPosition = position;
+		}
 	}
 
 }

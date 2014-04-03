@@ -21,10 +21,12 @@ public class TrainerCD extends Trainer {
 	public void trainData(int epochs) {
 		for (int epoch = 0; epoch < epochs; epoch++) {
 			System.out.println("Epoch: "+epoch);
-			for (int[] datapoint : datapoints) {
+			for (int i = 0; i < datapoints.length; i++) {
+				int[] datapoint = datapoints[i];
 				trainDataPoint(datapoint);
 				if (img != null)
 					img.showImage(rbm.read());
+				//if (i > 0) break;
 			}
 		}
 	}
