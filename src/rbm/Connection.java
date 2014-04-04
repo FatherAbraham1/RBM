@@ -41,5 +41,9 @@ public class Connection {
 	public Neuron getNeuronB() {
 		return b;
 	}
+	
+	public String toString() {
+		return "<-"+weight+"->";
+	}
 
 }

@@ -69,8 +69,8 @@ public abstract class Neuron {
 		return (state != 0.0);
 	}
 	
-	public double getEnergy() {
-		return energy;
+	public double getProbability() {
+		return logistic(activationEnergy());
 	}
 
 }

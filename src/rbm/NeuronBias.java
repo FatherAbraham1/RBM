@@ -2,7 +2,8 @@ package rbm;
 
 public class NeuronBias extends Neuron {
 	
-	public void update() {
+	public NeuronBias() {
+		super();
 		state = 1.0;
 	}
 

@@ -2,13 +2,14 @@ package rbm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import tools.Tools;
 
 public class RBM {
 	
 	public Layer visible, hidden;
 	public List<Connection> connections;
-	Random random = new Random(11235);
+	public static Neuron bias = new NeuronBias();
 	
 	// lazy evaluation (sets visible size when first datapoint comes in)
 	public RBM(int hiddenSize) {
@@ -49,7 +50,7 @@ public class RBM {
 		return hidden;
 	}
 	
-	public void connect(int visibleIndex, int hiddenIndex) {
+	private void connect(int visibleIndex, int hiddenIndex) {
 		if (getConnection(visibleIndex, hiddenIndex) == null) {
 			connections.add(new Connection(visible.get(visibleIndex), hidden.get(hiddenIndex)));
 		}
@@ -63,18 +64,25 @@ public class RBM {
 			return null;
 	}
 	
-	public void connectFully() {
-		for (int i = 0; i < visible.size(); i++) {
-			for (int j = 0; j < hidden.size(); j++) {
+	private void connectFully() {
+		// connect layers in bipartite fashion
+		for (int i = 0; i < visible.size(); i++)
+			for (int j = 0; j < hidden.size(); j++)
 				connect(i, j);
-			}
-		}
+		// connect all nodes in visible layer to bias unit
+		for (int i = 0; i < visible.size(); i++)
+			if (visible.get(i).getConnection(bias) == null)
+				connections.add(new Connection(visible.get(i), bias));
+		// connect all nodes in hidden layer to bias unit
+		for (int i = 0; i < hidden.size(); i++)
+			if (hidden.get(i).getConnection(bias) == null)
+				connections.add(new Connection(hidden.get(i), bias));
 		initializeWeights();
 	}
 	
 	public void initializeWeights() {
 		for (Connection connection : connections)
-			connection.setWeight(random.nextGaussian() * 0.01);
+			connection.setWeight(Tools.random.nextGaussian() * 0.01);
 	}
 	
 	public void setWeights(double[] weights) {
@@ -110,7 +118,7 @@ public class RBM {
 		double[] probabilities = new double[visible.size()];
 		int i = 0;
 		for (Neuron neuron : visible.neurons) {
-			probabilities[i] = neuron.getEnergy();
+			probabilities[i] = neuron.getProbability();
 			i++;
 		}
 		return probabilities;
@@ -141,6 +149,18 @@ public class RBM {
 	
 	public double[] sampleProbabilities(int[] initial) {
 		return sampleProbabilities(initial, 1);
+	}
+	
+	public int[] daydream(int steps) {
+		int[] vector = new int[visible.size()];
+		for (int i = 0; i < visible.size(); i++) {
+			vector[i] = Tools.random.nextInt(1);
+		}
+		return sample(vector, steps);
+	}
+	
+	public int[] daydream() {
+		return daydream(1);
 	}
 
 }

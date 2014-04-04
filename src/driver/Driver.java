@@ -20,14 +20,17 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		
-		RBM rbm = new RBM(8);
+		RBM rbm = new RBM(10);
 		
-		trainImage(rbm, "data/train/7.txt", "null");
-		//trainImages(rbm);
+		//trainImage(rbm, "data/train/7.txt", "null");
+		trainImages(rbm);
 
 	}
 	
 	private static void trainImages(RBM rbm) {
+		
+		int minDigit = 0;
+		int maxDigit = 9;
 		
 		// parse the 10 digits
 		System.out.println("Parsing...");
@@ -35,20 +38,20 @@ public class Driver {
 		// train
 		Data trainData = new Data();
 		parser = new Parser(trainData);
-		for (int i = 0; i <= 9; i++)
-			parser.parseLabelFile("data/train/"+i+".txt", String.valueOf(i), 100);
+		for (int i = minDigit; i <= maxDigit; i++)
+			parser.parseLabelFile("data/train/"+i+".txt", String.valueOf(i), 10);
 		trainData.shuffle();
 		// test
 		Data testData = new Data();
 		parser = new Parser(testData);
-		for (int i = 0; i <= 9; i++)
+		for (int i = minDigit; i <= maxDigit; i++)
 			parser.parseLabelFile("data/test/"+i+".txt", String.valueOf(i));
 		testData.shuffle();
 		
 		System.out.println("Training...");
 		Trainer trainer = new TrainerCD(rbm, trainData);
-		trainer.drawProgress(new ImagePane(width, 10.0));
-		trainer.trainData(1);
+		//trainer.drawProgress(new ImagePane(width, 10.0));
+		trainer.trainData(20);
 		
 		System.out.println("Testing...");
 		Tester tester = new Tester(rbm);
@@ -70,11 +73,15 @@ public class Driver {
 		
 		Data data = new Data();
 		Parser parser = new Parser(data);
-		parser.parseLabelFile(file, label);
+		parser.parseLabelFile(file, label, 10);
 		
 		Trainer trainer = new TrainerCD(rbm, data);
-		trainer.drawProgress(new ImagePane(width, 10.0));
-		trainer.trainData(5);
+		//trainer.drawProgress(new ImagePane(width, 10.0));
+		trainer.trainData(200);
+		
+		ImagePane img = new ImagePane(width, 10.0);
+		for (int i = 0; i < 1000; i++)
+			img.showImage(rbm.daydream(5));
 		
 //		data.truncate(3);
 //		Trainer trainer = new TrainerPSO(rbm, data);

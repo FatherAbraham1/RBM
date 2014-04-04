@@ -16,7 +16,7 @@ public class TrainerCD extends Trainer {
 	Map<Connection, Integer> negative;
 	double learningRate = 0.5;
 	double errorThreshold = 0.1;
-	int maxSteps = 500;
+	int samplingSteps = 5;
 	
 	public TrainerCD(RBM rbm, Data data) {
 		super(rbm, data);
@@ -24,26 +24,18 @@ public class TrainerCD extends Trainer {
 	
 	public void trainData(int epochs) {
 		for (int epoch = 0; epoch < epochs; epoch++) {
-			System.out.println("Epoch: "+epoch);
-			int failures = 0;
+			double error = 0.0;
 			for (int i = 0; i < data.numDatapoints(); i++) {
 				Datapoint datapoint = data.get(i);
 				int[] vector = data.vectorLabeled(datapoint);
-				int step = 0;
-				while (Error.mse(vector, rbm.sample(vector)) > errorThreshold && step++ < maxSteps)
-					trainDataPoint(datapoint);
-				double error = Error.mse(vector, rbm.sample(vector));
-				if (error > errorThreshold) {
-					failures++;
-				} else {
-					if (img != null)
-						img.showImage(rbm.readVisible());
-				}
-				
+				trainDataPoint(datapoint);
+				error += Error.mse(vector, rbm.sample(vector));
+				if (img != null)
+					img.showImage(rbm.readVisible());
 			}
-			System.out.println("FAILURES: "+failures);
-			//  500: 92 46 27
-			// 1000: 77 50 73 18
+			error /= data.numDatapoints();
+			System.out.println("EPOCH "+epoch+" ERROR: "+error);
+			//  .11 .12
 		}
 	}
 	
