@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+
+import tools.Tools;
 
 public abstract class Neuron {
 	
 	protected Map<Neuron, Connection> connections = new HashMap<>();
 	protected double state;
-	protected static Random random = new Random(11235);
+	private double energy;
 	
 	public Neuron() {
 		
@@ -39,6 +40,7 @@ public abstract class Neuron {
 		for (Map.Entry<Neuron, Connection > conn : connections.entrySet()) {
 			energy += conn.getKey().state() * conn.getValue().getWeight();
 		}
+		this.energy = energy;
 		return energy;
 	}
 	
@@ -47,7 +49,7 @@ public abstract class Neuron {
 	}
 	
 	private void stochasticSwitch(double probability) {
-		if (random.nextDouble() < probability)
+		if (Tools.random.nextDouble() < probability)
 			state = 1.0;
 		else
 			state = 0.0;
@@ -65,6 +67,10 @@ public abstract class Neuron {
 	
 	public boolean on() {
 		return (state != 0.0);
+	}
+	
+	public double getEnergy() {
+		return energy;
 	}
 
 }

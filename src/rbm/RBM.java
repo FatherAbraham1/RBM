@@ -10,17 +10,25 @@ public class RBM {
 	public List<Connection> connections;
 	Random random = new Random(11235);
 	
+	// lazy evaluation (sets visible size when first datapoint comes in)
+	public RBM(int hiddenSize) {
+		hidden = new Layer(hiddenSize);
+	}
+	
 	public RBM(int visibleSize, int hiddenSize) {
-		
 		visible = new Layer(visibleSize);
 		hidden = new Layer(hiddenSize);
 		connections = new ArrayList<>(visibleSize * hiddenSize);
-		
 	}
 	
 	public void setVisibleNodes(int[] data) {
+		if (visible == null) {
+			visible = new Layer(data.length);
+			connections = new ArrayList<>(data.length * hidden.size());
+			connectFully();
+		}
 		if (data.length != visible.size()) {
-			System.out.println("ERROR: Datapoint size does not match RBM visible layer.");
+			System.out.println("ERROR: Datapoint size ("+data.length+") does not match RBM visible layer ("+visible.size()+").");
 			System.exit(1);
 		}
 		for (int i = 0; i < data.length; i++) {
@@ -85,7 +93,7 @@ public class RBM {
 		return "["+visible.size()+","+hidden.size()+"]";
 	}
 	
-	public int[] read() {
+	public int[] readVisible() {
 		int[] result = new int[visible.size()];
 		int i = 0;
 		for (Neuron neuron : visible.neurons) {
@@ -96,6 +104,43 @@ public class RBM {
 			i++;
 		}
 		return result;
+	}
+	
+	public double[] readVisibleProbabilities() {
+		double[] probabilities = new double[visible.size()];
+		int i = 0;
+		for (Neuron neuron : visible.neurons) {
+			probabilities[i] = neuron.getEnergy();
+			i++;
+		}
+		return probabilities;
+	}
+	
+	// sets visible nodes, samples back and for "steps" times, and returns visible nodes
+	public int[] sample(int[] initial, int steps) {
+		setVisibleNodes(initial);
+		for (int i = 0; i < steps; i++) {
+			hidden.sample();
+			visible.sample();
+		}
+		return readVisible();
+	}
+	
+	public int[] sample(int[] initial) {
+		return sample(initial, 1);
+	}
+	
+	public double[] sampleProbabilities(int[] initial, int steps) {
+		setVisibleNodes(initial);
+		for (int i = 0; i < steps; i++) {
+			hidden.sample();
+			visible.sample();
+		}
+		return readVisibleProbabilities();
+	}
+	
+	public double[] sampleProbabilities(int[] initial) {
+		return sampleProbabilities(initial, 1);
 	}
 
 }

@@ -20,7 +20,7 @@ public class TrainerPSO extends Trainer {
 		for (int i = 0; i < epochs; i++) {
 			pso.update();
 			if (img != null)
-				img.showImage(rbm.read());
+				img.showImage(rbm.readVisible());
 		}
 	}
 

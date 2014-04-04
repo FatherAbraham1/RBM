@@ -20,13 +20,13 @@ public class Fitness {
 		
 		double fitness = 0.0;
 		int i;
-		for (i = 0; i < datapoints.size(); i++) {
+		for (i = 0; i < datapoints.numDatapoints(); i++) {
 			Datapoint datapoint = datapoints.get(i);
 			rbm.setVisibleNodes(datapoint.vector());
 			rbm.hidden.sample();
 			rbm.visible.sample();
 			rbm.hidden.sample();
-			int[] generated = rbm.read();
+			int[] generated = rbm.readVisible();
 			
 			// calculate percent correct
 			int correct = 0;
