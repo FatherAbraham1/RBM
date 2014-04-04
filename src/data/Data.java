@@ -29,6 +29,10 @@ public class Data {
 		return datapoints.get(0).size();
 	}
 	
+	public int datapointSizeLabeled() {
+		return datapoints.get(0).size() + labels.size();
+	}
+	
 	public int numDatapoints() {
 		return datapoints.size();
 	}

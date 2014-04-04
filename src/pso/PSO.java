@@ -13,7 +13,7 @@ public class PSO {
 	static double cognitiveInfluence = 2.5;
 	static double socialInfluence = 2.5;
 	static Particle globalBest = null;
-	double globalBestFitness = 0.0;
+	double globalBestFitness = -1 * Double.MAX_VALUE;
 	Fitness fitnessEvaluation;
 	double avgFitness = 0.0;
 	int convergenceCount = 0;
@@ -64,7 +64,7 @@ public class PSO {
 			convergenceCount = 0;
 		}
 		
-		if (range < 0.01 || convergenceCount > 5) {
+		if (range < 0.001 || convergenceCount > 15) {
 			System.out.println("REINITIALIZING");
 			for (Particle particle : particles)
 				particle.reinitialize();

@@ -13,6 +13,7 @@ public class TrainerPSO extends Trainer {
 	public TrainerPSO(RBM rbm, Data data) {
 		super(rbm, data);
 		fitness = new Fitness(rbm, data);
+		rbm.setVisibleNodes(data.vectorLabeled(data.get(0)));
 		pso = new PSO(rbm.connections.size(), fitness);
 	}
 	

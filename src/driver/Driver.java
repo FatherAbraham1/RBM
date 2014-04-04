@@ -22,8 +22,8 @@ public class Driver {
 		
 		RBM rbm = new RBM(10);
 		
-		//trainImage(rbm, "data/train/7.txt", "null");
-		trainImages(rbm);
+		trainImage(rbm, "data/train/7.txt", "null");
+//		trainImages(rbm);
 
 	}
 	
@@ -75,17 +75,14 @@ public class Driver {
 		Parser parser = new Parser(data);
 		parser.parseLabelFile(file, label, 10);
 		
-		Trainer trainer = new TrainerCD(rbm, data);
-		//trainer.drawProgress(new ImagePane(width, 10.0));
+		//Trainer trainer = new TrainerCD(rbm, data);
+		Trainer trainer = new TrainerPSO(rbm, data);
+		trainer.drawProgress(new ImagePane(width, 10.0));
 		trainer.trainData(200);
 		
 		ImagePane img = new ImagePane(width, 10.0);
 		for (int i = 0; i < 1000; i++)
 			img.showImage(rbm.daydream(5));
-		
-//		data.truncate(3);
-//		Trainer trainer = new TrainerPSO(rbm, data);
-//		trainer.trainData(300);
 		
 		
 	}
