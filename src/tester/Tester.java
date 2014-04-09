@@ -20,7 +20,7 @@ public class Tester {
 		confusionMatrix = new ConfusionMatrix(data.getLabels());
 		for (int i = 0; i < data.numDatapoints(); i++) {
 			Datapoint datapoint = data.get(i);
-			int correctLabel = datapoint.getLabel();
+			int correctLabel = datapoint.getSingleLabel();
 			int producedLabel = crbm.classify(datapoint);
 			confusionMatrix.add(correctLabel, producedLabel);
 		}

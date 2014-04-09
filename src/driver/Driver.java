@@ -1,13 +1,15 @@
 package driver;
 
+import java.util.Random;
+
 import rbm.RBM;
 import tester.ConfusionMatrix;
 import tester.Tester;
+import tools.Tools;
 import trainer.Trainer;
 import trainer.TrainerCD;
 import trainer.TrainerPSO;
 import visualizer.ImagePane;
-import visualizer.Visualizer;
 import data.Data;
 import data.PCA;
 import data.Parser;
@@ -26,9 +28,29 @@ public class Driver {
 		
 		RBM rbm = new RBM(10);
 		
-//		trainImage(rbm, "data/train/7.txt", "null");
-		trainImages(rbm);
+		for (int i = 1; i < 50; i++)
+			createXOR(1).writeToFile("data/xor/"+i+".txt");
+		
+//		trainImage(rbm, "data/train/7.txt", 7);
+//		trainImages(rbm);
 
+	}
+	
+	private static Data createXOR(int n) {
+		Data data = new Data();
+		int examples = 100;
+		Random random = new Random(11235);
+		for (int i = 0; i < examples; i++) {
+			int[] points = new int[n*2];
+			int[] label = new int[n];
+			for (int j = 0; j < n; j++) {
+				points[j] = random.nextInt(2);
+				points[n+j] = random.nextInt(2);
+				label[j] = points[j]^points[n+j];
+				data.add(points, label);
+			}
+		}
+		return data;
 	}
 	
 	private static void trainImages(RBM rbm) {
@@ -45,13 +67,13 @@ public class Driver {
 		Data trainData = new Data();
 		parser = new Parser(trainData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parseLabelFile("data/train/"+i+".txt", String.valueOf(i), trainCap);
+			parser.parse("data/train/"+i+".txt", Tools.oneVector(i,10), trainCap);
 		trainData.shuffle();
 		// test
 		Data testData = new Data();
 		parser = new Parser(testData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parseLabelFile("data/test/"+i+".txt", String.valueOf(i), testCap);
+			parser.parse("data/test/"+i+".txt", Tools.oneVector(i,10), testCap);
 		testData.shuffle();
 		
 		System.out.println("Training...");
@@ -75,8 +97,8 @@ public class Driver {
 		for (int i = 0; i < 5; i++) {
 			Trainer trainerCD = new TrainerCD(rbm, trainData);
 			trainerCD.trainData(3);
-			Trainer trainerPSO = new TrainerPSO(rbm, trainData);
-			trainerPSO.trainData(100);
+//			Trainer trainerPSO = new TrainerPSO(rbm, trainData);
+//			trainerPSO.trainData(100);
 		}
 		
 		System.out.println("Testing...");
@@ -95,11 +117,11 @@ public class Driver {
 		
 	}
 	
-	private static void trainImage(RBM rbm, String file, String label) {
+	private static void trainImage(RBM rbm, String file, int label) {
 		
 		Data data = new Data();
 		Parser parser = new Parser(data);
-		parser.parseLabelFile(file, label, 100);
+		parser.parse(file, Tools.oneVector(label,10), 100);
 		
 		
 		Trainer trainerCD = new TrainerCD(rbm, data);
@@ -137,13 +159,13 @@ private static void trainImagesPCA(RBM rbm) {
 		Data trainData = new Data();
 		parser = new Parser(trainData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parseLabelFile("data/train/"+i+".txt", String.valueOf(i), trainCap);
+			parser.parse("data/train/"+i+".txt", Tools.oneVector(i,10), trainCap);
 		trainData.shuffle();
 		// test
 		Data testData = new Data();
 		parser = new Parser(testData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parseLabelFile("data/test/"+i+".txt", String.valueOf(i), testCap);
+			parser.parse("data/test/"+i+".txt", Tools.oneVector(i,10), testCap);
 		testData.shuffle();
 		
 		if (pca != null) {

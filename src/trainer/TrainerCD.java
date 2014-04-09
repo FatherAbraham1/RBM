@@ -27,7 +27,7 @@ public class TrainerCD extends Trainer {
 			double error = 0.0;
 			for (int i = 0; i < data.numDatapoints(); i++) {
 				Datapoint datapoint = data.get(i);
-				int[] vector = data.vectorLabeled(datapoint);
+				int[] vector = datapoint.getVector();
 				trainDataPoint(datapoint);
 				updateWeights();
 				error += Error.mse(vector, rbm.sample(vector));
@@ -41,7 +41,7 @@ public class TrainerCD extends Trainer {
 	}
 	
 	public void trainDataPoint(Datapoint datapoint) {
-		rbm.setVisibleNodes(data.vectorLabeled(datapoint));
+		rbm.setVisibleNodes(datapoint.getVector());
 		rbm.hidden.sample();
 		positive = getGradient();
 		rbm.visible.sample();

@@ -47,4 +47,10 @@ public class Tools {
 		return (int) Math.round(value);
 	}
 	
+	public static int[] oneVector(int val, int vectorSize) {
+		int[] vector = new int[vectorSize];
+		vector[val] = 1;
+		return vector;
+	}
+	
 }

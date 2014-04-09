@@ -32,6 +32,24 @@ public class ClassRBM {
 		return label;
 	}
 	
+	public int classifyMulti(Datapoint datapoint) {
+		int[] points = new int[data.datapointSize()+data.numLabels()];
+		for (int i = 0; i < datapoint.size(); i++)
+			points[i] = datapoint.get(i);
+		double[] probabilities = rbm.sampleProbabilities(points);
+		int label = 0;
+		highestLabelProbability = 0;
+		for (int i = 0; i < data.numLabels(); i++) {
+			if (probabilities[datapoint.size()+i] > highestLabelProbability) {
+				highestLabelProbability = probabilities[datapoint.size()+i];
+				label = i;
+			}
+			//System.out.print(probabilities[datapoint.size()+i]+" ");
+		}
+		//System.out.println();
+		return label;
+	}
+	
 	public double confidence(Datapoint datapoint) {
 		classify(datapoint);
 		// this looks like an error

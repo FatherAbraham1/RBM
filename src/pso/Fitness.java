@@ -25,7 +25,7 @@ public class Fitness {
 		for (i = 0; i < data.numDatapoints(); i++) {
 			Datapoint datapoint = data.get(i);
 			
-			int[] vector = data.vectorLabeled(datapoint);
+			int[] vector = datapoint.getVector();
 			error += Error.mse(vector, rbm.sample(vector));
 			
 		}

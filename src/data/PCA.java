@@ -40,7 +40,7 @@ public class PCA {
 	private void transformData() {
 		for (Datapoint datapoint : data.datapoints) {
 			Datapoint newPoint = transformDataPoint(datapoint);
-			transformedData.add(newPoint.getFeatures(), data.getLabel(newPoint.getLabel()));
+			transformedData.add(newPoint.getFeatures(), newPoint.getLabel());
 		}
 	}
 	
