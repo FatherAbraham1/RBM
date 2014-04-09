@@ -5,18 +5,21 @@ import java.util.List;
 
 public class PSO {
 	
-	List<Particle> particles;
-	double minValue = -4;
-	double maxValue =  4;
-	static int numParticles = 75;
-	static double momentum = 4;
-	static double cognitiveInfluence = 2.5;
-	static double socialInfluence = 2.5;
+	public List<Particle> particles;
+	double maxValue =  5;
+	double minValue = -maxValue;
+	static int numParticles = 1;
+	static double momentum = 0.9;
+//	static double cognitiveInfluence = 2.5;
+//	static double socialInfluence = 0.05;
+	static double cognitiveInfluence = 0.00;
+	static double socialInfluence = 0.005;
 	static Particle globalBest = null;
 	double globalBestFitness = -1 * Double.MAX_VALUE;
 	Fitness fitnessEvaluation;
 	double avgFitness = 0.0;
 	int convergenceCount = 0;
+	double[] CDPosition;
 	
 	// NOTE: the influences can be local to the particle
 	
@@ -26,6 +29,7 @@ public class PSO {
 		for (int i = 0; i < numParticles; i++) {
 			particles.add(new Particle(particleSize, minValue, maxValue));
 		}
+		CDPosition = new double[particleSize];
 		evaluateParticles();
 	}
 	
@@ -37,6 +41,7 @@ public class PSO {
 	}
 	
 	public void evaluateParticles() {
+		
 		// evaluate all particles
 		double minFitness = Double.MAX_VALUE;
 		double avgFitness = 0.0;
@@ -52,10 +57,12 @@ public class PSO {
 		avgFitness /= particles.size();
 		double range = globalBestFitness - minFitness;
 		//System.out.format("FITNESS: (%10f , %10f)   %f\n", minFitness, globalBestFitness, avgFitness);
-		System.out.format("RANGE: %10f    AVG: %10f    BEST: %10f\n", 
+		System.out.format("RANGE: %10f    AVG: %10f    BEST: %10f    POS: %f,%f,%f\n", 
 				range, 
 				avgFitness,
-				globalBestFitness);
+				globalBestFitness,
+				globalBest.position[0], globalBest.position[1], globalBest.position[2]);
+				//globalBest.personalBestPosition[0], globalBest.personalBestPosition[1], globalBest.personalBestPosition[2]);
 		
 		if (this.avgFitness == avgFitness) {
 			convergenceCount++;
@@ -64,11 +71,17 @@ public class PSO {
 			convergenceCount = 0;
 		}
 		
-		if (range < 0.001 || convergenceCount > 15) {
-			System.out.println("REINITIALIZING");
-			for (Particle particle : particles)
-				particle.reinitialize();
-		}
+	}
+	
+	public void setPositions(double[] position) {
+		for (Particle particle : particles)
+			for (int i = 0; i < position.length; i++)
+				particle.position[i] = position[i];
+		evaluateParticles();
+	}
+	
+	public double[] getSolution() {
+		return globalBest.personalBestPosition;
 	}
 
 }

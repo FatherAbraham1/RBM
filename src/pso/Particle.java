@@ -9,6 +9,9 @@ public class Particle {
 	double[] position, velocity, personalBestPosition;
 	private double personalBestFitness;
 	private double minValue, maxValue;
+	private double maxSpeed = 0.01;
+	//private double velocityInfluence = 0.0000001;
+	private double velocityInfluence = 0.001;
 
 	/**
 	 * Create a new particle 
@@ -24,7 +27,7 @@ public class Particle {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 		initialize();
-		personalBestPosition = position;
+		updatePersonalBestPosition(position);
 	}
 	
 	public void reinitialize() {
@@ -34,7 +37,7 @@ public class Particle {
 	private void initialize() {
 		for (int i = 0; i < size; i++) {
 			position[i] = Tools.getRandomDouble(minValue, maxValue);
-			velocity[i] = Tools.getRandomDouble(minValue, maxValue);
+			velocity[i] = Tools.getRandomDouble(-maxSpeed, maxSpeed);
 		}
 	}
 	
@@ -44,8 +47,21 @@ public class Particle {
 	}
 	
 	private void move() {
-		for (int i = 0; i < size; i++)
-			position[i] += velocity[i];
+		int margin = 2;
+		for (int i = 0; i < size; i++) {
+			// TODO: this is causing problems
+			position[i] += velocity[i] * velocityInfluence;
+			if (position[i] < minValue) {
+				position[i] = minValue + margin;
+				velocity[i] = 0;
+				//velocity[i] *= -0.5;
+			}
+			if (position[i] > maxValue) {
+				position[i] = maxValue - margin;
+				velocity[i] = 0;
+				//velocity[i] *= -0.5;
+			}
+		}
 	}
 	
 	private void velocityUpdate() {
@@ -57,13 +73,31 @@ public class Particle {
 			double update = term1 + term2 + term3;
 			velocity[i] += update;
 		}
+		clampSpeed();
+	}
+	
+	private void clampSpeed() {
+		for (int i = 0; i < velocity.length; i++) {
+			velocity[i] = Math.max(Math.min(velocity[i], maxSpeed), -maxSpeed);
+		}
 	}
 	
 	public void setFitness(double fitness) {
 		if (fitness > personalBestFitness) {
 			personalBestFitness = fitness;
-			personalBestPosition = position;
+			updatePersonalBestPosition(position);
 		}
+	}
+	
+	private void updatePersonalBestPosition(double[] position) {
+		if (personalBestPosition == null)
+			personalBestPosition = new double[position.length];
+		for (int i = 0; i < position.length; i++)
+			personalBestPosition[i] = position[i];
+	}
+	
+	public void setPosition(double[] position) {
+		this.position = position;
 	}
 
 }

@@ -43,8 +43,8 @@ public class Data {
 			datapoints.remove(datapoints.size()-1);
 		List<String> newLabels = new ArrayList<>();
 		for (Datapoint datapoint : datapoints)
-			if (!newLabels.contains(labels.get(datapoint.label())))
-				newLabels.add(labels.get(datapoint.label()));
+			if (!newLabels.contains(labels.get(datapoint.getLabel())))
+				newLabels.add(labels.get(datapoint.getLabel()));
 		labels = newLabels;
 	}
 	
@@ -57,12 +57,12 @@ public class Data {
 	}
 	
 	public int[] vectorLabeled(Datapoint datapoint) {
-		int numPoints = datapoint.vector().length;
+		int numPoints = datapoint.getFeatures().length;
 		int[] vector = new int[numPoints+numLabels()];
 		for (int i = 0; i < numPoints; i++)
 			vector[i] = datapoint.get(i);
 		for (int i = 0; i < numLabels(); i++) {
-			if (datapoint.label() == i)
+			if (datapoint.getLabel() == i)
 				vector[numPoints+i] = 1;
 			else
 				vector[numPoints+i] = 0;
@@ -72,6 +72,16 @@ public class Data {
 	
 	public List<String> getLabels() {
 		return labels;
+	}
+	
+	public String getLabel(int index) {
+		return labels.get(index);
+	}
+	
+	public void convertToBinary() {
+		for (Datapoint datapoint : datapoints) {
+			datapoint.convertToBinary();
+		}
 	}
 
 }

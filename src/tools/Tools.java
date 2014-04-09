@@ -43,4 +43,8 @@ public class Tools {
 		return (double) Math.round(val) / pow;
 	}
 	
+	public static int toInt(double value) {
+		return (int) Math.round(value);
+	}
+	
 }

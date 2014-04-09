@@ -13,6 +13,7 @@ public abstract class Trainer {
 	public Trainer(RBM rbm, Data data) {
 		this.rbm = rbm;
 		this.data = data;
+		rbm.setVisibleNodes(data.vectorLabeled(data.get(0)));
 	}
 	
 	public abstract void trainData(int epochs);

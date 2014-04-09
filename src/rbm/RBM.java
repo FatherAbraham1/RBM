@@ -64,7 +64,7 @@ public class RBM {
 			return null;
 	}
 	
-	private void connectFully() {
+	public void connectFully() {
 		// connect layers in bipartite fashion
 		for (int i = 0; i < visible.size(); i++)
 			for (int j = 0; j < hidden.size(); j++)
@@ -90,11 +90,19 @@ public class RBM {
 			System.out.println("ERROR: Weight vector size does not match number of connections");
 			System.exit(1);
 		}
-		int i = 0;
-		for (Connection connection : connections) {
+		for (int i = 0; i < connections.size(); i++) {
+			Connection connection = connections.get(i);
 			connection.setWeight(weights[i]);
-			i++;
 		}
+	}
+	
+	public double[] getWeights() {
+		double[] weights = new double[connections.size()];
+		for (int i = 0; i < connections.size(); i++) {
+			Connection connection = connections.get(i);
+			weights[i] = connection.getWeight();
+		}
+		return weights;
 	}
 	
 	public String toString() {

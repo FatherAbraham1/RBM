@@ -10,11 +10,11 @@ public class Datapoint {
 		this.label = label;
 	}
 	
-	public int label() {
+	public int getLabel() {
 		return label;
 	}
 	
-	public int[] vector() {
+	public int[] getFeatures() {
 		return points;
 	}
 	
@@ -24,6 +24,31 @@ public class Datapoint {
 	
 	public int get(int i) {
 		return points[i];
+	}
+	
+	public String toString() {
+		String str = "[";
+		for (int i = 0; i < points.length; i++) {
+			if (i > 0)
+				str += ",";
+			str += points[i];
+		}
+		str += "]";
+		return str;
+	}
+	
+	public void convertToBinary() {
+		int max = -Integer.MAX_VALUE;
+		for (int i = 0; i < points.length; i++) {
+			max = Math.max(max, points[i]);
+		}
+		int threshold = max/2;
+		for (int i = 0; i < points.length; i++) {
+			if (points[i] > threshold)
+				points[i] = 1;
+			else
+				points[i] = 0;
+		}
 	}
 
 }

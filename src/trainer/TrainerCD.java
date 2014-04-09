@@ -29,6 +29,7 @@ public class TrainerCD extends Trainer {
 				Datapoint datapoint = data.get(i);
 				int[] vector = data.vectorLabeled(datapoint);
 				trainDataPoint(datapoint);
+				updateWeights();
 				error += Error.mse(vector, rbm.sample(vector));
 				if (img != null)
 					img.showImage(rbm.readVisible());
@@ -46,12 +47,20 @@ public class TrainerCD extends Trainer {
 		rbm.visible.sample();
 		rbm.hidden.sample();
 		negative = getGradient();
-		updateWeights();
 	}
 	
-	private void updateWeights() {
+	public void updateWeights() {
 		for (Connection connection : rbm.connections)
 			connection.updateWeight(learningRate*(positive.get(connection) - negative.get(connection)));
+	}
+	
+	public double[] getNextWeights() {
+		double[] nextWeights = new double[rbm.connections.size()];
+		for (int i = 0; i < rbm.connections.size(); i++) {
+			Connection connection = rbm.connections.get(i);
+			nextWeights[i] = connection.getWeight() + learningRate*(positive.get(connection) - negative.get(connection));
+		}
+		return nextWeights;
 	}
 	
 	/**

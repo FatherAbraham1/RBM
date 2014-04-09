@@ -21,6 +21,7 @@ public class ImagePane {
 		this.scale = scale;
 		frame = new JFrame();
 		frame.getContentPane().setLayout(new FlowLayout());
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public void showImage(BufferedImage image) {

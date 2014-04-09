@@ -24,33 +24,15 @@ public class Fitness {
 		int i;
 		for (i = 0; i < data.numDatapoints(); i++) {
 			Datapoint datapoint = data.get(i);
-			rbm.setVisibleNodes(data.vectorLabeled(datapoint));
-			rbm.hidden.sample();
-			rbm.visible.sample();
-			rbm.hidden.sample();
-			
-			//int[] generated = rbm.readVisible();
 			
 			int[] vector = data.vectorLabeled(datapoint);
 			error += Error.mse(vector, rbm.sample(vector));
 			
-			/*
-			// calculate percent correct
-			int correct = 0;
-			for (int j = 0; j < datapoint.size(); j++)
-				if (datapoint.get(j) == generated[j])
-					correct++;
-			fitness += (double)correct / datapoint.size();
-			*/
-			
 		}
 		error /= data.numDatapoints();
-		//fitness /= (i+1);
 		
 		fitness = 1 - error;
-		
 		particle.setFitness(fitness);
-		
 		return fitness;
 		
 	}

@@ -22,6 +22,8 @@ public class Parser {
 	 * @return	A list of datapoints
 	 */
 	public void parseLabelFile(String filePath, String label, int numExamples) {
+		if (numExamples < 1)
+			numExamples = Integer.MAX_VALUE;
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(filePath));

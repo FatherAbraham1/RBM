@@ -32,11 +32,13 @@ public class Visualizer {
 	int height = 800;
 	double minWeight = Double.MAX_VALUE;
 	double maxWeight = Double.MIN_VALUE;
+	Layer visible, hidden;
 	
+	// create a structure with "Node" objects as vertices and "Connection" objects as edges
 	Layout<Node, Connection> layout;
  	BasicVisualizationServer<Node, Connection> vis;
- 	Layer visible, hidden;
  	
+ 	// these transformers are optional, only use if you want something besides default
  	private Transformer<Connection, Paint> edgePaint = new Transformer<Connection, Paint>() {
  	    public Paint transform(Connection c) {
  	    	float hue = 0.0f;
@@ -57,15 +59,18 @@ public class Visualizer {
 		}
 	};
 	
+	// create a graph out of the rbm structure
 	public Visualizer(RBM rbm) {
 		graph = new SparseMultigraph<Node, Connection>();
 		visible = rbm.getVisible();
 		hidden = rbm.getHidden();
+		// add all visible nodes as vertices
 		for (int i = 0; i < visible.size(); i++) {
 			Node node = new Node(visible.get(i));
 			nodes.put(visible.get(i), node);
 			graph.addVertex(node);
 		}
+		// add all hidden nodes as vertices and connections as edges
 		for (int i = 0; i < hidden.size(); i++) {
 			Node node = new Node(hidden.get(i));
 			nodes.put(hidden.get(i), node);
@@ -74,6 +79,7 @@ public class Visualizer {
 			graph.addVertex(node);
 			List<Connection> connections = hidden.get(i).getConnections();
 			for (Connection connection : connections) {
+				System.out.println(connection+"  "+nodes.get(connection.getNeuronA())+"   "+nodes.get(connection.getNeuronB()));
 				graph.addEdge(connection, nodes.get(connection.getNeuronA()), nodes.get(connection.getNeuronB()));
 				double weight = connection.getWeight();
 				if (weight < minWeight)
@@ -86,11 +92,14 @@ public class Visualizer {
 	}
 	
 	private void setGraph(Graph<Node, Connection> graph) {
+		
+		// use a static layout to manually place nodes
 		layout = new StaticLayout<Node, Connection>(graph);
 		layout.setSize(new Dimension(width,height));
 		vis = new BasicVisualizationServer<Node,Connection>(layout);
 	 	vis.setPreferredSize(new Dimension(width,height));
 	 	
+	 	// this code is to manually place nodes (alternatively let jung handle this)
 	 	double visibleStep = height / visible.size();
 	 	double visiblePosition = visibleStep / 2;
 	 	double hiddenStep = height / hidden.size();
@@ -106,11 +115,13 @@ public class Visualizer {
 	 		}
 		}
 	 	
+	 	// apply transformers from above to change default colors and weights
 	 	vis.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
 	 	vis.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
 	 	vis.getRenderContext().setEdgeStrokeTransformer(edgeStroke);
 	}
 	
+	// draw the graph to a jframe
 	public void showStructure() {
 		JFrame frame = new JFrame("Simple Graph View");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

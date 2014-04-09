@@ -12,9 +12,11 @@ public class TrainerPSO extends Trainer {
 	
 	public TrainerPSO(RBM rbm, Data data) {
 		super(rbm, data);
+		double[] weights = rbm.getWeights(); // test
 		fitness = new Fitness(rbm, data);
-		rbm.setVisibleNodes(data.vectorLabeled(data.get(0)));
 		pso = new PSO(rbm.connections.size(), fitness);
+		
+		pso.setPositions(weights);
 	}
 	
 	public void trainData(int epochs) {
@@ -23,6 +25,7 @@ public class TrainerPSO extends Trainer {
 			if (img != null)
 				img.showImage(rbm.readVisible());
 		}
+		rbm.setWeights(pso.getSolution());
 	}
 
 }
