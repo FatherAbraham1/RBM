@@ -28,29 +28,9 @@ public class Driver {
 		
 		RBM rbm = new RBM(10);
 		
-		for (int i = 1; i < 50; i++)
-			createXOR(1).writeToFile("data/xor/"+i+".txt");
-		
 //		trainImage(rbm, "data/train/7.txt", 7);
 //		trainImages(rbm);
 
-	}
-	
-	private static Data createXOR(int n) {
-		Data data = new Data();
-		int examples = 100;
-		Random random = new Random(11235);
-		for (int i = 0; i < examples; i++) {
-			int[] points = new int[n*2];
-			int[] label = new int[n];
-			for (int j = 0; j < n; j++) {
-				points[j] = random.nextInt(2);
-				points[n+j] = random.nextInt(2);
-				label[j] = points[j]^points[n+j];
-				data.add(points, label);
-			}
-		}
-		return data;
 	}
 	
 	private static void trainImages(RBM rbm) {
