@@ -27,17 +27,24 @@ public class Driver {
 	public static void main(String[] args) {
 		
 		//RBM rbm = new RBM(10);
-		RBM rbm = new RBM(25);
 		
 //		trainImage(rbm, "data/train/7.txt", 7);
 //		trainImages(rbm);
-		testXOR(rbm, 2);
+		testXOR(25, 3);
 
 	}
 	
-	private static void testXOR(RBM rbm, int n) {
+	private static void testXOR(int rbmSize, int n) {
 		
-		// parse the 10 digits
+		RBM rbmCD = new RBM(rbmSize);
+		RBM rbmPSO = new RBM(rbmSize);
+		
+		int trainDataSize = 70;
+		int testDataSize = 50;
+		int iterationsCD = 2000;
+		int iterationsPSO = 2000;
+		
+		// Parse
 		System.out.println("Parsing...");
 		Data trainData = new Data();
 		Data testData = new Data();
@@ -47,62 +54,29 @@ public class Driver {
 		parser.parseFile("data/xor/"+n+".txt");
 		trainData.shuffle();
 		testData.shuffle();
-		trainData.truncate(50);
-		testData.truncate(50);
+		trainData.truncate(trainDataSize);
+		testData.truncate(testDataSize);
 		
 		// train
-//		Trainer trainerCD = new TrainerCD(rbm, trainData);
-//		trainerCD.trainData(200);
+		Trainer trainerCD = new TrainerCD(rbmCD, trainData);
+		trainerCD.trainData(iterationsCD);
 		
-		Trainer trainerPSO = new TrainerPSO(rbm, trainData);
-		trainerPSO.trainData(20000);
+		Trainer trainerPSO = new TrainerPSO(rbmPSO, trainData);
+		trainerPSO.trainData(iterationsPSO);
+		
+		Tester testerCD = new Tester(rbmCD);
+		double accuracyCD = testerCD.testGenerative(testData);
+		
+		Tester testerPSO = new Tester(rbmPSO);
+		double accuracyPSO = testerPSO.testGenerative(testData);
+		
+		System.out.println("TRAIN = "+trainDataSize+"      TEST = "+testDataSize);
+		System.out.format("%12s: %f\n","CD ("+iterationsCD+")",accuracyCD);
+		System.out.format("%12s: %f\n","PSO ("+iterationsPSO+")",accuracyPSO);
 		
 		// show network
-		Visualizer vis = new Visualizer(rbm);
+		//Visualizer vis = new Visualizer(rbm);
 		//vis.showStructure();
-		
-		System.out.println();
-		System.out.println("TESTS");
-		double accuracy;
-		
-		Tester tester = new Tester(rbm);
-		accuracy = tester.testGenerative(testData);
-		System.out.println("Accuracy: "+accuracy);
-		
-		/*
-		Tester tester = new Tester(rbm);
-		accuracy = tester.testMulti(testData);
-		System.out.println("Accuracy: "+accuracy);
-		*/
-		/*
-		int correct = 0;
-		for (int i = 0; i < testData.numDatapoints(); i++) {
-			Datapoint datapoint = testData.get(i);
-			int[] vector = new int[datapoint.getFeatures().length+datapoint.getLabel().length];
-			for (int j = 0; j < datapoint.getFeatures().length; j++)
-				vector[j] = datapoint.getFeatures()[j];
-			int[] result = rbm.sample(vector);
-			//Tools.printVector(result);
-			if (result.length == 3 && ((result[0]^result[1])==result[2]))
-				correct++;
-		}
-		accuracy = (double) correct / testData.numDatapoints();
-		System.out.println("ACCURACY: "+accuracy);
-		*/
-		
-		/*
-		System.out.println();
-		System.out.println("TESTS");
-		int[][] tests = new int[][] { {0,0,0}, {0,1,0}, {1,0,0}, {1,1,0} };
-		for (int i = 0; i < tests.length; i++) {
-			for (int j = 0; j < 5; j++) {
-				int[] result = rbm.sample(tests[i], 1);
-				for (int k = 0; k < result.length; k++)
-					System.out.print(result[k]+" ");
-				System.out.println();
-			}
-		}
-		*/
 	}
 	
 	private static void trainImages(RBM rbm) {

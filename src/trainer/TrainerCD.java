@@ -17,6 +17,7 @@ public class TrainerCD extends Trainer {
 	double learningRate = 0.5;
 	double errorThreshold = 0.1;
 	int samplingSteps = 5;
+	public boolean echo = false;
 	
 	public TrainerCD(RBM rbm, Data data) {
 		super(rbm, data);
@@ -35,7 +36,8 @@ public class TrainerCD extends Trainer {
 					img.showImage(rbm.readVisible());
 			}
 			error /= data.numDatapoints();
-			System.out.println("EPOCH "+epoch+" ERROR: "+error);
+			if (echo)
+				System.out.println("EPOCH "+epoch+" ERROR: "+error);
 			//  .11 .12
 		}
 	}
