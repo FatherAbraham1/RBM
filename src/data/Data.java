@@ -104,5 +104,13 @@ public class Data {
 			e.printStackTrace();
 		}
 	}
+	
+	public String toString() {
+		String str = "";
+		for (Datapoint datapoint : datapoints) {
+			str += datapoint.toString()+"\n";
+		}
+		return str;
+	}
 
 }

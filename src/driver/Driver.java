@@ -1,7 +1,5 @@
 package driver;
 
-import java.util.Random;
-
 import rbm.RBM;
 import tester.ConfusionMatrix;
 import tester.Tester;
@@ -10,7 +8,9 @@ import trainer.Trainer;
 import trainer.TrainerCD;
 import trainer.TrainerPSO;
 import visualizer.ImagePane;
+import visualizer.Visualizer;
 import data.Data;
+import data.Datapoint;
 import data.PCA;
 import data.Parser;
 
@@ -26,11 +26,83 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 		
-		RBM rbm = new RBM(10);
+		//RBM rbm = new RBM(10);
+		RBM rbm = new RBM(25);
 		
 //		trainImage(rbm, "data/train/7.txt", 7);
 //		trainImages(rbm);
+		testXOR(rbm, 2);
 
+	}
+	
+	private static void testXOR(RBM rbm, int n) {
+		
+		// parse the 10 digits
+		System.out.println("Parsing...");
+		Data trainData = new Data();
+		Data testData = new Data();
+		Parser parser = new Parser(trainData);
+		parser.parseFile("data/xor/"+n+".txt");
+		parser = new Parser(testData);
+		parser.parseFile("data/xor/"+n+".txt");
+		trainData.shuffle();
+		testData.shuffle();
+		trainData.truncate(50);
+		testData.truncate(50);
+		
+		// train
+//		Trainer trainerCD = new TrainerCD(rbm, trainData);
+//		trainerCD.trainData(200);
+		
+		Trainer trainerPSO = new TrainerPSO(rbm, trainData);
+		trainerPSO.trainData(20000);
+		
+		// show network
+		Visualizer vis = new Visualizer(rbm);
+		//vis.showStructure();
+		
+		System.out.println();
+		System.out.println("TESTS");
+		double accuracy;
+		
+		Tester tester = new Tester(rbm);
+		accuracy = tester.testGenerative(testData);
+		System.out.println("Accuracy: "+accuracy);
+		
+		/*
+		Tester tester = new Tester(rbm);
+		accuracy = tester.testMulti(testData);
+		System.out.println("Accuracy: "+accuracy);
+		*/
+		/*
+		int correct = 0;
+		for (int i = 0; i < testData.numDatapoints(); i++) {
+			Datapoint datapoint = testData.get(i);
+			int[] vector = new int[datapoint.getFeatures().length+datapoint.getLabel().length];
+			for (int j = 0; j < datapoint.getFeatures().length; j++)
+				vector[j] = datapoint.getFeatures()[j];
+			int[] result = rbm.sample(vector);
+			//Tools.printVector(result);
+			if (result.length == 3 && ((result[0]^result[1])==result[2]))
+				correct++;
+		}
+		accuracy = (double) correct / testData.numDatapoints();
+		System.out.println("ACCURACY: "+accuracy);
+		*/
+		
+		/*
+		System.out.println();
+		System.out.println("TESTS");
+		int[][] tests = new int[][] { {0,0,0}, {0,1,0}, {1,0,0}, {1,1,0} };
+		for (int i = 0; i < tests.length; i++) {
+			for (int j = 0; j < 5; j++) {
+				int[] result = rbm.sample(tests[i], 1);
+				for (int k = 0; k < result.length; k++)
+					System.out.print(result[k]+" ");
+				System.out.println();
+			}
+		}
+		*/
 	}
 	
 	private static void trainImages(RBM rbm) {
@@ -47,13 +119,13 @@ public class Driver {
 		Data trainData = new Data();
 		parser = new Parser(trainData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parse("data/train/"+i+".txt", Tools.oneVector(i,10), trainCap);
+			parser.parseLabelFile("data/train/"+i+".txt", Tools.oneVector(i,10), trainCap);
 		trainData.shuffle();
 		// test
 		Data testData = new Data();
 		parser = new Parser(testData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parse("data/test/"+i+".txt", Tools.oneVector(i,10), testCap);
+			parser.parseLabelFile("data/test/"+i+".txt", Tools.oneVector(i,10), testCap);
 		testData.shuffle();
 		
 		System.out.println("Training...");
@@ -101,7 +173,7 @@ public class Driver {
 		
 		Data data = new Data();
 		Parser parser = new Parser(data);
-		parser.parse(file, Tools.oneVector(label,10), 100);
+		parser.parseLabelFile(file, Tools.oneVector(label,10), 100);
 		
 		
 		Trainer trainerCD = new TrainerCD(rbm, data);
@@ -139,13 +211,13 @@ private static void trainImagesPCA(RBM rbm) {
 		Data trainData = new Data();
 		parser = new Parser(trainData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parse("data/train/"+i+".txt", Tools.oneVector(i,10), trainCap);
+			parser.parseLabelFile("data/train/"+i+".txt", Tools.oneVector(i,10), trainCap);
 		trainData.shuffle();
 		// test
 		Data testData = new Data();
 		parser = new Parser(testData);
 		for (int i = minDigit; i <= maxDigit; i++)
-			parser.parse("data/test/"+i+".txt", Tools.oneVector(i,10), testCap);
+			parser.parseLabelFile("data/test/"+i+".txt", Tools.oneVector(i,10), testCap);
 		testData.shuffle();
 		
 		if (pca != null) {

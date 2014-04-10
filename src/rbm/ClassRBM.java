@@ -1,5 +1,6 @@
 package rbm;
 
+import tools.Tools;
 import data.Data;
 import data.Datapoint;
 
@@ -32,22 +33,15 @@ public class ClassRBM {
 		return label;
 	}
 	
-	public int classifyMulti(Datapoint datapoint) {
+	public int[] classifyMulti(Datapoint datapoint) {
 		int[] points = new int[data.datapointSize()+data.numLabels()];
 		for (int i = 0; i < datapoint.size(); i++)
 			points[i] = datapoint.get(i);
-		double[] probabilities = rbm.sampleProbabilities(points);
-		int label = 0;
-		highestLabelProbability = 0;
-		for (int i = 0; i < data.numLabels(); i++) {
-			if (probabilities[datapoint.size()+i] > highestLabelProbability) {
-				highestLabelProbability = probabilities[datapoint.size()+i];
-				label = i;
-			}
-			//System.out.print(probabilities[datapoint.size()+i]+" ");
-		}
-		//System.out.println();
-		return label;
+		int[] vis = rbm.sample(points);
+		int[] labels = new int[data.numLabels()];
+		for (int i = 0; i < labels.length; i++)
+			labels[labels.length-1-i] = vis[vis.length-1-i];
+		return labels;
 	}
 	
 	public double confidence(Datapoint datapoint) {

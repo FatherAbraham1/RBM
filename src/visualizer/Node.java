@@ -6,9 +6,11 @@ import rbm.Neuron;
 
 public class Node {
 	
+	public enum TYPE { VISIBLE, HIDDEN, BIAS };
+	
 	Neuron neuron;
 	Color color = Color.red;
-	boolean hidden = false;
+	TYPE type = TYPE.VISIBLE;
 	
 	public Node(Neuron neuron) {
 		this.neuron = neuron;

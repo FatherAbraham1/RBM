@@ -53,4 +53,23 @@ public class Tools {
 		return vector;
 	}
 	
+	public static boolean checkEqual(int[] vector1, int[] vector2) {
+		if (vector1.length != vector2.length)
+			return false;
+		for (int i = 0; i < vector1.length; i++)
+			if (vector1[i] != vector2[i])
+				return false;
+		return true;
+	}
+	
+	public static void printVector(int[] vector) {
+		System.out.print("[");
+		for(int i = 0; i < vector.length; i++) {
+			if (i > 0)
+				System.out.print(",");
+			System.out.print(vector[i]);
+		}
+		System.out.println("]");
+	}
+	
 }

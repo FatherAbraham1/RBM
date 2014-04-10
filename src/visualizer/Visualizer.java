@@ -33,6 +33,8 @@ public class Visualizer {
 	double minWeight = Double.MAX_VALUE;
 	double maxWeight = Double.MIN_VALUE;
 	Layer visible, hidden;
+	boolean showBias = true;
+	boolean showOn = true;
 	
 	// create a structure with "Node" objects as vertices and "Connection" objects as edges
 	Layout<Node, Connection> layout;
@@ -67,6 +69,8 @@ public class Visualizer {
 		// add all visible nodes as vertices
 		for (int i = 0; i < visible.size(); i++) {
 			Node node = new Node(visible.get(i));
+			if (showOn && !visible.get(i).on())
+				node.setColor(Color.BLACK);
 			nodes.put(visible.get(i), node);
 			graph.addVertex(node);
 		}
@@ -74,12 +78,33 @@ public class Visualizer {
 		for (int i = 0; i < hidden.size(); i++) {
 			Node node = new Node(hidden.get(i));
 			nodes.put(hidden.get(i), node);
-			node.hidden = true;
+			node.type = node.type.HIDDEN;
 			node.setColor(Color.green);
+			if (showOn && !hidden.get(i).on())
+				node.setColor(Color.BLACK);
 			graph.addVertex(node);
 			List<Connection> connections = hidden.get(i).getConnections();
 			for (Connection connection : connections) {
-				System.out.println(connection+"  "+nodes.get(connection.getNeuronA())+"   "+nodes.get(connection.getNeuronB()));
+				if (nodes.get(connection.getNeuronA()) != null && nodes.get(connection.getNeuronB()) != null) {
+					graph.addEdge(connection, nodes.get(connection.getNeuronA()), nodes.get(connection.getNeuronB()));
+					double weight = connection.getWeight();
+					if (weight < minWeight)
+						minWeight = weight;
+					if (weight > maxWeight)
+						maxWeight = weight;
+				}
+			}
+		}
+		if (showBias) {
+			// add bias node as vertex
+			Node bias = new Node(rbm.bias);
+			bias.type = bias.type.BIAS;
+			bias.setColor(Color.BLUE);
+			nodes.put(rbm.bias, bias);
+			graph.addVertex(bias);
+			// connect bias
+			List<Connection> connections = rbm.bias.getConnections();
+			for (Connection connection : connections) {
 				graph.addEdge(connection, nodes.get(connection.getNeuronA()), nodes.get(connection.getNeuronB()));
 				double weight = connection.getWeight();
 				if (weight < minWeight)
@@ -106,12 +131,14 @@ public class Visualizer {
 	 	double hiddenPosition = hiddenStep / 2;
 	 	for (Object n : graph.getVertices()) {
 	 		Node node = (Node) n;
-	 		if (!node.hidden) {
-	 			layout.setLocation(node, new Point2D.Double(width/5, visiblePosition));
-	 			visiblePosition += visibleStep;
-	 		} else {
+	 		if (node.type == node.type.BIAS) {
+	 			layout.setLocation(node, new Point2D.Double(width/2, 20));
+	 		} else if (node.type == node.type.HIDDEN) {
 	 			layout.setLocation(node, new Point2D.Double(4*width/5, hiddenPosition));
 	 			hiddenPosition += hiddenStep;
+	 		} else if (node.type == node.type.VISIBLE) {
+	 			layout.setLocation(node, new Point2D.Double(width/5, visiblePosition));
+	 			visiblePosition += visibleStep;
 	 		}
 		}
 	 	
