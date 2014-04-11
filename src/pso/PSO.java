@@ -5,15 +5,17 @@ import java.util.List;
 
 public class PSO {
 	
-	public List<Particle> particles;
-	double maxValue =  5;
+	double maxValue =  30;
 	double minValue = -maxValue;
-	static int numParticles = 1;
-	static double momentum = 0.9;
-//	static double cognitiveInfluence = 2.5;
-//	static double socialInfluence = 0.05;
-	static double cognitiveInfluence = 0.00;
-	static double socialInfluence = 0.005;
+	static int numParticles = 10;
+	static double momentum = 0.09;
+	static double cognitiveInfluence = 1.0;
+	static double socialInfluence = 1.0;
+	static double maxSpeed = 0.01;
+	static double velocityInfluence = 0.001;
+	
+	boolean echo = false;
+	public List<Particle> particles;
 	static Particle globalBest = null;
 	double globalBestFitness = -1 * Double.MAX_VALUE;
 	Fitness fitnessEvaluation;
@@ -45,6 +47,7 @@ public class PSO {
 		// evaluate all particles
 		double minFitness = Double.MAX_VALUE;
 		double avgFitness = 0.0;
+		double maxFitness = -minFitness;
 		for (Particle particle : particles) {
 			double fitness = fitnessEvaluation.evaluate(particle);
 			if (fitness > globalBestFitness) {
@@ -53,19 +56,19 @@ public class PSO {
 			}
 			avgFitness += fitness;
 			minFitness = Math.min(fitness, minFitness);
+			maxFitness = Math.max(fitness, maxFitness);
 		}
 		avgFitness /= particles.size();
 		double range = globalBestFitness - minFitness;
 		//System.out.format("FITNESS: (%10f , %10f)   %f\n", minFitness, globalBestFitness, avgFitness);
-		/*
-		System.out.format("RANGE: %10f    AVG: %10f    BEST: %10f    POS: %f,%f,%f\n", 
-				range, 
-				avgFitness,
-				globalBestFitness,
-				globalBest.position[0], globalBest.position[1], globalBest.position[2]);
-				//globalBest.personalBestPosition[0], globalBest.personalBestPosition[1], globalBest.personalBestPosition[2]);
-		*/
-		
+		if (echo) {
+			System.out.format("RANGE: %10f    FITNESS: (%8f,%8f,%8f)    BEST: %10f    POS: %f,%f,%f\n", 
+					range, 
+					minFitness, avgFitness, maxFitness,
+					globalBestFitness,
+					globalBest.position[0], globalBest.position[1], globalBest.position[2]);
+					//globalBest.personalBestPosition[0], globalBest.personalBestPosition[1], globalBest.personalBestPosition[2]);
+		}
 		if (this.avgFitness == avgFitness) {
 			convergenceCount++;
 		} else {

@@ -12,11 +12,12 @@ public class TrainerPSO extends Trainer {
 	
 	public TrainerPSO(RBM rbm, Data data) {
 		super(rbm, data);
-		double[] weights = rbm.getWeights(); // test
 		fitness = new Fitness(rbm, data);
 		pso = new PSO(rbm.connections.size(), fitness);
-		
-		pso.setPositions(weights);
+	}
+	
+	public void setToExistingRBM() {
+		pso.setPositions(rbm.getWeights());
 	}
 	
 	public void trainData(int epochs) {

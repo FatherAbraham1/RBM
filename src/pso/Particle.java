@@ -9,9 +9,9 @@ public class Particle {
 	double[] position, velocity, personalBestPosition;
 	private double personalBestFitness;
 	private double minValue, maxValue;
-	private double maxSpeed = 0.01;
+	
 	//private double velocityInfluence = 0.0000001;
-	private double velocityInfluence = 0.001;
+	
 
 	/**
 	 * Create a new particle 
@@ -37,7 +37,7 @@ public class Particle {
 	private void initialize() {
 		for (int i = 0; i < size; i++) {
 			position[i] = Tools.getRandomDouble(minValue, maxValue);
-			velocity[i] = Tools.getRandomDouble(-maxSpeed, maxSpeed);
+			velocity[i] = Tools.getRandomDouble(-PSO.maxSpeed, PSO.maxSpeed);
 		}
 	}
 	
@@ -50,7 +50,7 @@ public class Particle {
 		int margin = 2;
 		for (int i = 0; i < size; i++) {
 			// TODO: this is causing problems
-			position[i] += velocity[i] * velocityInfluence;
+			position[i] += velocity[i] * PSO.velocityInfluence;
 			if (position[i] < minValue) {
 				position[i] = minValue + margin;
 				velocity[i] = 0;
@@ -78,7 +78,7 @@ public class Particle {
 	
 	private void clampSpeed() {
 		for (int i = 0; i < velocity.length; i++) {
-			velocity[i] = Math.max(Math.min(velocity[i], maxSpeed), -maxSpeed);
+			velocity[i] = Math.max(Math.min(velocity[i], PSO.maxSpeed), -PSO.maxSpeed);
 		}
 	}
 	
