@@ -30,7 +30,7 @@ public class Driver {
 		
 //		trainImage(rbm, "data/train/7.txt", 7);
 //		trainImages(rbm);
-		testXOR(25, 1);
+		testXOR(25, 3);
 
 	}
 	
@@ -41,8 +41,8 @@ public class Driver {
 		
 		int trainDataSize = 100;
 		int testDataSize = 100;
-		int iterationsCD = 200;
-		int iterationsPSO = 200;
+		int iterationsCD = 0;
+		int iterationsPSO = 3000;
 		
 		// Parse
 		System.out.println("Parsing...");
@@ -57,30 +57,38 @@ public class Driver {
 		trainData.truncate(trainDataSize);
 		testData.truncate(testDataSize);
 		
+		double accuracyPSO = 0;
+		double accuracyCD = 0;
+		long runtimePSO = 0;
+		long runtimeCD = 0;
+		
 		// train
 		if (iterationsPSO > 0) {
+			long startTime = System.currentTimeMillis();
 			Trainer trainerPSO = new TrainerPSO(rbmPSO, trainData);
 			trainerPSO.trainData(iterationsPSO);
+			runtimePSO = System.currentTimeMillis() - startTime;
 		}
 		if (iterationsCD > 0) {
+			long startTime = System.currentTimeMillis();
 			Trainer trainerCD = new TrainerCD(rbmCD, trainData);
 			trainerCD.trainData(iterationsCD);
+			runtimeCD = System.currentTimeMillis() - startTime;
 		}
 		
-		double accuracyPSO = 0;
+		
 		if (iterationsPSO > 0) {
 			Tester testerPSO = new Tester(rbmPSO);
 			accuracyPSO = testerPSO.testGenerative(testData);
 		}
-		double accuracyCD = 0;
 		if (iterationsCD > 0) {
 			Tester testerCD = new Tester(rbmCD);
 			accuracyCD = testerCD.testGenerative(testData);
 		}
 		
 		System.out.println("TRAIN = "+trainDataSize+"      TEST = "+testDataSize);
-		System.out.format("%12s: %f\n","CD ("+iterationsCD+")",accuracyCD);
-		System.out.format("%12s: %f\n","PSO ("+iterationsPSO+")",accuracyPSO);
+		System.out.format("%12s: %f     %d\n","CD ("+iterationsCD+")", accuracyCD, runtimeCD);
+		System.out.format("%12s: %f     %d\n","PSO ("+iterationsPSO+")", accuracyPSO, runtimePSO);
 		
 		// show network
 		//Visualizer vis = new Visualizer(rbm);

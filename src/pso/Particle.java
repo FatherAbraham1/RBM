@@ -50,7 +50,7 @@ public class Particle {
 		int margin = 2;
 		for (int i = 0; i < size; i++) {
 			// TODO: this is causing problems
-			position[i] += velocity[i] * PSO.velocityInfluence;
+			position[i] += velocity[i];
 			if (position[i] < minValue) {
 				position[i] = minValue + margin;
 				velocity[i] = 0;

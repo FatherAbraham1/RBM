@@ -7,14 +7,16 @@ public class PSO {
 	
 	double maxValue =  30;
 	double minValue = -maxValue;
-	static int numParticles = 10;
-	static double momentum = 0.09;
+	static int numParticles = 8;
+	static double momentum = 0.9;
+	static double maxMomentum = momentum;
+	static double minMomentum = 0.4;
 	static double cognitiveInfluence = 1.0;
 	static double socialInfluence = 1.0;
-	static double maxSpeed = 0.01;
-	static double velocityInfluence = 0.001;
-	
+	static double maxSpeed = 0.7;
+	static int numFitnessTests = 2;
 	boolean echo = false;
+	
 	public List<Particle> particles;
 	static Particle globalBest = null;
 	double globalBestFitness = -1 * Double.MAX_VALUE;
@@ -22,6 +24,8 @@ public class PSO {
 	double avgFitness = 0.0;
 	int convergenceCount = 0;
 	double[] CDPosition;
+	int timestep = 0;
+	int maxIterations = 0;
 	
 	// NOTE: the influences can be local to the particle
 	
@@ -36,10 +40,35 @@ public class PSO {
 	}
 	
 	public void update() {
+		timestep++;
 		for (Particle particle : particles) {
 			particle.runIteration();
 		}
 		evaluateParticles();
+		//annealMomentumLinear();
+	}
+	
+	public void setMaxIterations(int iterations) {
+		maxIterations = iterations;
+	}
+	
+	public void annealMomentumLinear() {
+		if (maxIterations <= 0) {
+			System.out.println("ERROR: Max iterations must be set.");
+			System.exit(1);
+		}
+		int timeleft = maxIterations - timestep;
+		momentum = minMomentum + (((double)timeleft/maxIterations) * (maxMomentum - minMomentum));
+	}
+	
+	public void annealMomentumExponential() {
+		if (maxIterations <= 0) {
+			System.out.println("ERROR: Max iterations must be set.");
+			System.exit(1);
+		}
+		int timeleft = maxIterations - timestep;
+		double factor = Math.pow(((double)timeleft/maxIterations), 2);
+		momentum = minMomentum + (factor * (maxMomentum - minMomentum));
 	}
 	
 	public void evaluateParticles() {
@@ -49,7 +78,10 @@ public class PSO {
 		double avgFitness = 0.0;
 		double maxFitness = -minFitness;
 		for (Particle particle : particles) {
-			double fitness = fitnessEvaluation.evaluate(particle);
+			double fitness = 0;
+			for (int i = 0; i < numFitnessTests; i++)
+				fitness += fitnessEvaluation.evaluate(particle);
+			fitness /= numFitnessTests;
 			if (fitness > globalBestFitness) {
 				globalBestFitness = fitness;
 				globalBest = particle;
@@ -87,6 +119,10 @@ public class PSO {
 	
 	public double[] getSolution() {
 		return globalBest.personalBestPosition;
+	}
+	
+	public double getSolutionFitness() {
+		return globalBestFitness;
 	}
 
 }
