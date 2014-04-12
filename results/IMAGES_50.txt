@@ -1,0 +1,4 @@
+Hidden Nodes	Visible Nodes	Connections	Error (CD)	Error (PSO)		Hidden Nodes	Visible Nodes	Connections	Iterations (CD)	Iterations (PSO)
+5	794	4769	0.16835	0.32472		5	794	4769	199	1500	
+15	794	12719	0.15961	0.26626		15	794	12719	199	1500	
+25	794	20669	0.15502	0.27319		25	794	20669	199	1500	

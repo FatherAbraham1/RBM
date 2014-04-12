@@ -44,8 +44,12 @@ public class Data {
 	}
 	
 	public void truncate(int num) {
+		truncate(0, num);
+	}
+	
+	public void truncate(int start, int num) {
 		int total = datapoints.size();
-		for (int i = 0; i < (total - num); i++)
+		for (int i = start; i < (total - num) + start; i++)
 			datapoints.remove(datapoints.size()-1);
 	}
 	

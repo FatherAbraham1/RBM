@@ -16,7 +16,7 @@ public abstract class Trainer {
 		rbm.setVisibleNodes(data.get(0).getVector());
 	}
 	
-	public abstract void trainData(int epochs);
+	public abstract int trainData(int epochs);
 	
 	public void drawProgress(ImagePane img) {
 		this.img = img;

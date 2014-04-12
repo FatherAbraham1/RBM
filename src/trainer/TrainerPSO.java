@@ -9,7 +9,7 @@ public class TrainerPSO extends Trainer {
 	
 	PSO pso = null;
 	Fitness fitness;
-	int convergenceNumber = 300;
+	int convergenceNumber = 200;
 	// .9544
 	
 	public TrainerPSO(RBM rbm, Data data) {
@@ -22,12 +22,12 @@ public class TrainerPSO extends Trainer {
 		pso.setPositions(rbm.getWeights());
 	}
 	
-	public void trainData(int epochs) {
+	public int trainData(int epochs) {
 		pso.setMaxIterations(epochs);
 		double lastFitness = 0;
 		int sameCount = 0;
-		int i;
-		for (i = 0; i < epochs; i++) {
+		int epoch;
+		for (epoch = 0; epoch < epochs; epoch++) {
 			pso.update();
 			double fitness = pso.getSolutionFitness();
 			if (fitness == lastFitness) {
@@ -41,10 +41,8 @@ public class TrainerPSO extends Trainer {
 			if (img != null)
 				img.showImage(rbm.readVisible());
 		}
-		if (i < epochs - 1) {
-			System.out.println("CONVERGED AT TIMESTEP "+i);
-		}
 		rbm.setWeights(pso.getSolution());
+		return epoch;
 	}
 
 }

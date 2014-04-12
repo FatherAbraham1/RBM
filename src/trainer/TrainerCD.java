@@ -17,14 +17,18 @@ public class TrainerCD extends Trainer {
 	double learningRate = 0.5;
 	double errorThreshold = 0.1;
 	int samplingSteps = 5;
+	int convergenceNumber = 200;
 	public boolean echo = false;
 	
 	public TrainerCD(RBM rbm, Data data) {
 		super(rbm, data);
 	}
 	
-	public void trainData(int epochs) {
-		for (int epoch = 0; epoch < epochs; epoch++) {
+	public int trainData(int epochs) {
+		double lastError = 0;
+		int sameCount = 0;
+		int epoch;
+		for (epoch = 0; epoch < epochs; epoch++) {
 			double error = 0.0;
 			for (int i = 0; i < data.numDatapoints(); i++) {
 				Datapoint datapoint = data.get(i);
@@ -36,10 +40,19 @@ public class TrainerCD extends Trainer {
 					img.showImage(rbm.readVisible());
 			}
 			error /= data.numDatapoints();
+			if (error >= lastError) {
+				sameCount++;
+			} else {
+				lastError = error;
+				sameCount = 0;
+			}
+			if (sameCount >= convergenceNumber || error == 0)
+				break;
 			if (echo)
 				System.out.println("EPOCH "+epoch+" ERROR: "+error);
 			//  .11 .12
 		}
+		return epoch;
 	}
 	
 	public void trainDataPoint(Datapoint datapoint) {
